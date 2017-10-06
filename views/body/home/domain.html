@@ -1,0 +1,53 @@
+<section class="container">
+
+    <div class="page-header">
+        <h1>Retrieving Domain <small>API</small></h1>
+    </div>
+
+    <p>This is a read-only API that returns the base domain of LivePerson that should be used in the APIs outlined in this document.</p>
+    <p>Retrieve your domain. Use the LivePerson Domain API to retrieve this information by providing the following service name:</p>
+
+    <div class="list-group">
+        <div href="" class="list-group-item">Read only: <span class="label label-success"> <strong>accountConfigReadOnly</strong> </span></div>
+        <div href="" class="list-group-item">Read/Write: <span class="label label-success"> <strong>accountConfigReadWrite</strong> </span></div>
+    </div>
+
+    <p>This API requires authorization using either a login or an API key methodology.</p>
+
+    <div class="col-md-6 col-lg-6 col-sm-6">
+        <form>
+
+            <div class="form-group">
+                <label for="lpAccount">Service:</label>
+                <input type="text" id="lpAccount" class="form-control" placeholder="ex: 3154687991" ng-model="domain.service">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputPassword1">Account #:</label>
+                <input type="text" class="form-control disabled" placeholder="ex: 455100124" ng-model="domain.account">
+            </div>
+
+            <a type="submit" class="btn btn-lp btn-sm" ng-click="getDomain()">GET Domain</a>
+        </form>
+    </div>
+    <div class="col-md-6 col-lg-6 col-sm-6">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr class="primary">
+                        <th>Service</th>
+                        <th>Account</th>
+                        <th>BaseURI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="primary" ng-Model='domain'>
+                        <td>{{domain.service}}</td>
+                        <td>{{domain.account}}</td>
+                        <td><span class="label label-info">{{domain.baseURI}}</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,114 @@
+<section class="container">
+
+    <div class="page-header">
+        <h1>Login - Auth <small>API</small></h1>
+    </div>
+
+    <p>This API allows you to Login to LiveEngage, as a user, using a username and password or as an application, using an API key. Once you login, a session token (Bearer) will be provided and can be used for relevant API calls.</p>
+    <p>This API provides endpoints for managing the User Session (User Login, Application Login, Logout and Refresh).</p>
+
+    <div class="page-header">
+        <h1><small>Use Cases</small></h1>
+    </div>
+
+    <div class="list-group">
+        <div href="" class="list-group-item">
+            <h3><span class="label label-warning"><strong>1. User Login</strong></span></h3>
+            <p>Use this method when you need to provide a programmatic way for users to access and manage a LiveEngage session such as customized agent workspace or hosting a LiveEngage user in an external app. Note:</p>
+            <ul>
+                <li>Using the User Login method, logged in users will be managed under the same restrictions as normal users in LiveEngage, including (for example) password expiration, concurrent conversations limits, skill groups and so on.</li>
+                <li>Using the User Login method, if your account has SSO enabled, this method will not be standalone and you will have to register the relevant user through your hub to provide LiveEngage with an SSO SAML assertion.</li>
+            </ul>
+        </div>
+        <div href="" class="list-group-item">
+            <h3><span class="label label-warning"><strong>2. Appplication Login</strong></span></h3>
+            <p>Use this method when you need to provide a programmatic way for applications to access and manage a LiveEngage session such as bots, virtual agents or any other app that needs to act as an agent in the LiveEngage.</p>
+            <ul>
+                <li><strong>Note: the Application Login method overcomes both issues detailed above with the User Login method, for example password expiration or SSO integration.</strong></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="page-header">
+        <h1><small>Getting Started</small></h1>
+    </div>
+
+    <div class="list-group">
+        <!-- RETRIEVE DOMAIN -->
+        <div href="" class="list-group-item">
+            <h3><span class="label label-warning"><strong>1. Retrieve your Domain</strong></span></h3>
+            <p>Use the <strong>LivePerson Domain API</strong> to retrieve this information by providing the following service name:</p>
+            <ul>
+                <li>Service: <span><strong>agentVep</strong></span></li>
+            </ul>
+        </div>
+        <!-- Login as a User -->
+        <div href="" class="list-group-item">
+            <h3><span class="label label-warning"><strong>2. Appplication Login as a User</strong></span></h3>
+            <p>
+                Use your LiveEngage username and password to login, you can send username and password in JSON Format:
+            </p>
+            <p>
+                <code>
+                    <samp>{</samp><br>
+                        &ensp;&ensp;&ensp;&ensp;<samp>"username" : "your_username",</samp><br>
+                        &ensp;&ensp;&ensp;&ensp;<samp>"password" : "your_password"</samp><br>
+                    <samp>}</samp><br>
+                </code>
+            </p>
+            <ul>
+                <li><strong>Note: In order to login as an application, you first need to have the "User Type - Bot" feature activated. Please contact your account team before moving forward.</strong></li>
+            </ul>
+        </div>
+        <!-- BEARER CODE -->
+        <div href="" class="list-group-item">
+            <h3><span class="label label-warning"><strong>3. Get Bearer Code</strong></span></h3>
+            <p>
+                This Bearer will help to access all API Methods for Users and Skills API.
+            </p>
+            <div class="row">
+                <div class="col-md-6 col-lg-6 col-sm-6">
+                    <form>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Account #:</label>
+                            <input type="text" class="form-control disabled" placeholder="account" ng-model="auth.account">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lpAccount">Username:</label>
+                            <input type="text" class="form-control" placeholder="username" ng-model="auth.username">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="exampleInputPassword1">Password:</label>
+                            <input type="password" class="form-control disabled" placeholder="password" ng-model="auth.password">
+                        </div>
+
+                        <a type="submit" class="btn btn-lp btn-sm" ng-click="login()">Submit</a>
+                    </form>
+                </div>
+                <br>
+                <div class="col-md-6 col-lg-6 col-sm-6">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr class="primary">
+                                    <th>Username</th>
+                                    <th>Bearer(Token)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="primary" ng-Model='auth'>
+                                    <td>{{auth.username}}</td>
+                                    <td><span class="label label-success">{{auth.bearer}}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

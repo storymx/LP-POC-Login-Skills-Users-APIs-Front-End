@@ -1,0 +1,57 @@
+.livepersonColor{
+    background-color: #f68a1f;
+}
+
+.lpBorder .btn .btn-sm .btn-md .btn-lg .panel .panel-body .panel-header .panel-footer{
+    border-color: #f68a1f;
+}
+
+
+.bs-callout {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+}
+
+.bs-callout-default{
+    border-left-color: #f68a1f;
+}
+
+.bs-callout-info {
+    border-left-color: #1b809e;
+}
+
+.bs-callout-info {
+    border-left-color: #1b809e;
+}
+
+.bs-callout-warning{
+    border-left-color: #8a6d3b;
+}
+
+.bs-callout-danger{
+    border-left-color: #a94442;
+}
+
+.ng-enter {
+    transition: 0.1s;
+    opacity: 0;
+}
+.ng-enter-stagger{
+    transition-delay: 0.1s
+}
+.ng-enter-active{
+    opacity: 1;
+}
+/*.ng-leave-stagger{
+    transition-delay: 0.1s;
+}
+.ng-leave{
+    transition: 0.1s;
+    opacity: 1;
+}*/
+.ng-leave-active{
+    opacity:0;
+}

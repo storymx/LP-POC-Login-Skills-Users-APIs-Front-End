@@ -1,0 +1,330 @@
+<section class="container">
+
+    <div class="page-header">
+        <h3>Auth Token</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-md-8 col-lg-8 col-sm-8">
+            <form class="">
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Account #:</label>
+                    <input type="text" class="form-control text-center" ng-model="auth.account" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Token: </label>
+                    <input type="text" class="form-control text-center" ng-model="auth.bearer" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputPassword1">ETag: </label>
+                    <input type="text" class="form-control text-center" ng-model="auth.ETag" disabled>
+                </div>
+
+                <!-- SELECT OPTION -->
+                <!-- <div class="form-group" ng-show="auth.bearer != null"> -->
+                <div class="form-group">
+                    <label for="lpAcco">Select Action:</label>
+                    <select class="form-control" ng-model="selectedOption">
+                        <option ng-repeat="option in options " value="{{option.value}} ">{{option.description}}</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="page-header " ng-Model="selectedOption">
+        <h3>Action: <span class="label label-warning ">{{options[selectedOption].description}}</span></h3>
+    </div>
+
+    <div class="row " ng-if="selectedOption==0 ">
+        <div class="col-md-12 col-lg-12 col-sm-12 ">
+            <div class="btn btn-block btn-lp " ng-Click="getSkills() ">Get Skills</div>
+        </div>
+        <div class="page-header ">
+            <h3>Results</h3>
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>loginName</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="skill in skills">
+                        <td>{{skill.id}}</td>
+                        <td>{{skill.name}}</td>
+                        <td><button class="btn btn-danger btn-sm" ng-click="deleteSkill(skill.id)"><span class="glyphicon glyphicon-trash"></span> Remove</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row " ng-if="selectedOption==1 ">
+        <div class="col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-md-8 col-lg-8 col-sm-8 ">
+            <form class=" ">
+                <div class="form-group ">
+                    <label>Skill Id:</label>
+                    <input type="text " class="form-control disabled " ng-model="skill_id ">
+                    <span class="label label-primary ">ReadOnly</span> -
+                    <span class="label label-success ">Required Only on Update</span>
+                </div>
+
+                <a type="submit " class="btn btn-lp btn-sm " ng-click="getSkillById(skill_id) ">Submit</a>
+            </form>
+        </div>
+        <div class="page-header ">
+            <h3>Results</h3>
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Skill Name</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{skill.id}}</td>
+                        <td>{{skill.name}}</td>
+                        <td><button class="btn btn-danger btn-sm" ng-click="deleteSkill(skill.id)"><span class="glyphicon glyphicon-trash"></span> Remove</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row " ng-if="selectedOption==2 || selectedOption==3">
+        <div class="col-md-8 col-lg-8 col-sm-8">
+            <form class="form-horizontal">
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Account Config(Unique ID):</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.id " disabled>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-success pull-right ">Required Only on Update</span><br>
+                        <span class="label label-primary pull-right ">ReadOnly</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 <col-s>m-4"><small>Deleted:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select class="form-control" ng-model="skill.deleted" disabled>
+                            <option value="true ">deleted</option>
+                            <option value="false ">not deleted</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">ReadOnly</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 || selectedOption==2 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Skill Name:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.name ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-danger pull-right ">Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 || selectedOption==2">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Description:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <textarea type="text " class="form-control" ng-model="skill.description"></textarea>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Skill Order:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.skillOrder ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Max Wait Time:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.maxWaitTime ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Required</span>
+                    </div>
+                </div>
+
+                <!-- <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Default Post Chat Survey Id:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control " ng-model="skill.defaultPostChatSurveyId " />
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">optional</span>
+                    </div>
+                </div> -->
+
+                <!-- <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Default Online Chat Survey Id:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.defaultOnlineSurveyId ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Default Agent Chat Survey Id:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.defaultAgentSurveyId ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div> -->
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Last Update Date Change:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.dateUpdated ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Skill Routing Configuration:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.skillRoutingConfiguration ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <!-- <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Agent Group Id:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.agentGroupId ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Priority:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.priority ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Split Percentage:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.splitPercentage ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Time Between Chat end and new Chat(wrapUpTime):</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.wrapUpTime ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Default Response Time:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.slaDefaultResponseTime ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Urgent Response Time:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.slaUrgentResponseTime ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>First Time Response Time:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.slaFirstTimeResponseTime ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div> -->
+
+                <!-- <div class="form-group " ng-if="selectedOption==3 ">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Lines of Lines of Business ids for Skill</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="skill.skillRoutingConfiguration ">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div> -->
+
+                <!-- CONTINUE WITH PERMISSION GROUPS -->
+
+                <a type="submit " ng-if="selectedOption==2" class="btn btn-lp btn-sm " ng-click="createSkill(user) "><span class="glyphicon glypicon-plus"></span> Create</a>
+                <a type="submit " ng-if="selectedOption==3" class="btn btn-lp btn-sm " ng-click="updateSkill() "><span class="glyphicon glypicon-refresh"></span> Update</a>
+            </form>
+
+        </div>
+        <div class="col-md-4 col-lg-4 col-sm-6" ng-if="selectedOption==3">
+            <div class="page-header ">
+                <h3>User List</h3>
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Skill Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="skl in skills">
+                            <td>{{skl.name}}</td>
+                            <td><button class="btn btn-lp btn-sm" ng-click="getSkillById(skl.id)"><span class="glyphicon glyphicon-pencil"></span> edit</button></td>
+                            <td><button class="btn btn-danger btn-sm" ng-click="deleteSkill(skl.id)"><span class="glyphicon glyphicon-trash"></span> delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- PICTURE ID, PICTURE URL, memberOf , managerOf WERE SKIPPED -->

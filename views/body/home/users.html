@@ -1,0 +1,575 @@
+<section class="container">
+
+    <div class="page-header">
+        <h3>Auth Token</h3>
+    </div>
+
+    <div class="row">
+        <div class="col-md-offset-1 col-lg-offset-1 col-sm-offset-2 col-md-8 col-lg-8 col-sm-8">
+            <form class="">
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Account #:</label>
+                    <input type="text" class="form-control text-center" ng-model="auth.account" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputPassword1">Token: </label>
+                    <input type="text" class="form-control text-center" ng-model="auth.bearer" disabled>
+                </div>
+
+                <div class="form-group">
+                    <label for="exampleInputPassword1">ETag: </label>
+                    <input type="text" class="form-control text-center" ng-model="auth.ETag" disabled>
+                </div>
+
+                <!-- SELECT OPTION -->
+                <!-- <div class="form-group" ng-show="auth.bearer != null"> -->
+                <div class="form-group">
+                    <label for="lpAcco">Select Action:</label>
+                    <select class="form-control" ng-model="selectedOption" ng-change="checkOption(selectedOption.value)">
+                        <option ng-repeat="option in options " value="{{option.value}} ">{{option.description}}</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="page-header " ng-Model="selectedOption ">
+        <h3>Action: <span class="label label-warning ">{{options[selectedOption].description}}</span></h3>
+    </div>
+
+    <div class="row " ng-if="selectedOption==0 ">
+        <div class="col-md-12 col-lg-12 col-sm-12 ">
+            <div class="btn btn-block btn-lp " ng-Click="getUsers() ">Get Users</div>
+        </div>
+        <div class="page-header ">
+            <h3>Results</h3>
+        </div>
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>loginName</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="usr in users">
+                    <td>{{usr.id}}</td>
+                    <td><a href="#/users/{{usr.id}}">{{usr.loginName}}</a></td>
+                    <td><button class="btn btn-lp btn-sm" ng-click="deleteUser(usr.id)"><span class="glyphicon glyphicon-trash"></span>remove</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row " ng-if="selectedOption==1 ">
+        <div class="col-md-offset-2 col-lg-offset-2 col-sm-offset-2 col-md-8 col-lg-8 col-sm-8 ">
+            <form class=" ">
+                <div class="form-group ">
+                    <label>User ID:</label>
+                    <input type="text " class="form-control disabled " ng-model="user_id">
+                    <span class="label label-primary ">ReadOnly</span> -
+                    <span class="label label-success ">Required Only on Update</span>
+                </div>
+
+                <a type="submit" class="btn btn-lp btn-sm " ng-click="getUserById(user_id) ">Submit</a>
+                <a type="submit" class="btn btn-lp btn-sm " ng-click="showChangePassword()" ng-if="user.id>0">Change Password</a>
+                <a type="submit" class="btn btn-lp btn-sm " ng-click="showResetPassword()" ng-if="user.id>0">Reset Password</a>
+
+                <div class="form-group " ng-if="changePassword">
+                    <label>New Password: </label>
+                    <input type="text " class="form-control disabled " ng-model="user.passwordSh">
+                    <span class="label label-success ">Required</span>
+                </div>
+
+                <div class="form-group " ng-if="changePassword">
+                    <label>Confirm Password: </label>
+                    <input type="text " class="form-control disabled " ng-model="user.confirmPassword">
+                    <span class="label label-success ">Required</span>
+                </div>
+
+                <div class="form-group " ng-if="changePassword">
+                    <label>Old Password: </label>
+                    <input type="text " class="form-control disabled " ng-model="user.oldPassword">
+                    <span class="label label-success ">Required</span>
+                </div>
+                <a type="submit " class="btn btn-lp btn-sm " ng-click="changeUserPassword()" ng-if="changePassword">Change Password</a>
+                <a type="submit " class="btn btn-lp btn-sm " ng-click="cancelChangeUserPassword()" ng-if="changePassword">Cancel</a>
+
+                <div class="form-group " ng-if="resetPassword">
+                    <label>New Password:</label>
+                    <input type="text " class="form-control disabled " ng-model="newPassword">
+                    <span class="label label-danger ">Required Only on Update</span>
+                </div>
+                <a type="submit " class="btn btn-lp btn-sm " ng-click="resetUserPassword(user.newPassword)" ng-if="resetPassword">Reset Password</a>
+                <a type="submit " class="btn btn-lp btn-sm " ng-click="cancelResetUserPassword()" ng-if="resetPassword">Cancel</a>
+            </form>
+        </div>
+        <div class="page-header ">
+            <h3>Results</h3>
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>loginName</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{users.id}}</td>
+                        <td>{{users.loginName}}</td>
+                        <td><button class="btn btn-lp btn-sm" ng-click="deleteUser(usr)"><span class="glyphicon glyphicon-trash"></span>remove</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row " ng-if="selectedOption==2 || selectedOption==3 || selectedOption==4">
+        <div class="col-md-8 col-lg-8 col-sm-8">
+            <form class="form-horizontal">
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>Account Config(Unique ID):</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="user.id " ng-disabled="selectedOption==3">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-success pull-right ">Required Only on Update</span><br>
+                        <span class="label label-primary pull-right ">ReadOnly</span>
+                    </div>
+                </div>
+                <!-- pid -->
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4 "><small>User Process ID:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7 ">
+                        <input type="text " class="form-control disabled " ng-model="user.pid " ng-disabled="selectedOption==3">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5 ">
+                        <span class="label label-primary pull-right ">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 <col-s>m-4"><small>Deleted:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select class="form-control" ng-model="user.deleted" disabled on-change="setDeleted(user.deleted)" ng-disabled="selectedOption==3">
+                            <option value="true">deleted</option>
+                            <option value="false">not deleted</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">ReadOnly</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Login Name:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " ng-model="user.loginName">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Full Name:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " ng-model="user.fullName">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Nickname:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " ng-model="user.nickname">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+                <!-- IS ENABLED -->
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>User Enabled:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select class="form-control" ng-model="user.isEnabled">
+                            <option value="true">enabled</option>
+                            <option value="false">not enabled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+                <!-- MAX CHATS -->
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Max Chats:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " ng-model="user.maxChats">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+                <!-- IS ACTIVE -->
+                <div class="form-group">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>User Active:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="user.isActive" class="form-control">
+                            <option value="true">active</option>
+                            <option value="false">inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label for="" class="col-md-3 col-lg-3 col-sm-4"><small>Skills:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="selectedSkill" class="form-control" ng-options="skill as skill.name for skill in skills"></select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <div class="btn btn-sm btn-lp" ng-Click="addSkill(selectedSkill)"><span class="glyphicon glyphicon-plus"></span> add skill</div><span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="panel panel-default" ng-if="selectedOption==3">
+                    <div class="panel-heading">
+                        Selected Skills
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="skill in user.skills">
+                                        <td class="text-center">{{skill.id}}</td>
+                                        <td class="text-center">{{skill.name}}</td>
+                                        <td class="text-center"><button class="btn btn-lp btn-sm" ng-click="removeSkill(skill)"><span class="glyphicon glyphicon-trash"></span> remove</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>E-mail:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="email " class="form-control disabled " ng-model="user.email">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+                <!-- IS ACTIVE -->
+                <!-- <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Member Of:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="agentGroupsFromAccount" class="form-control">
+                            <option ng-repeat="group in agentGroupsFromAccount" value="agent.id">{{agent.name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div> -->
+
+                <!-- <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Manager Of:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="agentGroupsFromAccount" class="form-control">
+                            <option ng-repeat="group in agentGroupsFromAccount" value="agent.id">{{agent.name}}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <div class="btn btn-sm btn-lp" ng-Click="addAgentGroup()"><span class="glyphicon glyphicon-plus"></span> add agent group</div><span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div> -->
+
+                <!-- <div class="panel panel-default">
+                    <div class="panel-heading">
+                        User's agent group that the agent if member of
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="group in managerOf">
+                                        <td>group.id</td>
+                                        <td>group.name</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> -->
+
+                <div class="form-group">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Password:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="password " class="form-control disabled " ng-model="user.passwordSh">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Old Password:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " ng-model="user.oldPassword">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-success pull-right">Required when a user updates password</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Confirm Password:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " ng-model="user.confirmPassword">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-success pull-right">Required when user updates password</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4" for=""><small>Change Password Next Login:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select class="form-control" ng-model="user.changePwdNextLogin">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Password Last Date changed: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " placeholder=" Years-Months-Days Hrs:Min:Sec" ng-model="user.lastPwdChangeDate">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">The format: y-m-d h-m-s</span><span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Password Date Updated: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control disabled " placeholder=" Years-Months-Days Hrs:Min:Sec" ng-model="user.dateUpdated">
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">The format: y-m-d h-m-s</span><span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Permission Groups:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="selectedPermission" ng-options="p.id as p.roleTypeName for p in permissionGroups" class="form-control"></select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <div class="btn btn-sm btn-lp" ng-Click="addPermission(selectedPermission)"><span class="glyphicon glyphicon-plus"></span> add permission</div>
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group" ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Disable Manually: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="user.disabledManually" class="form-control">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Description: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <textarea type="textarea " class="form-control" ng-model="user.description"></textarea>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Mobile Number: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control" ng-model="user.mobileNumber" />
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Employee ID: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control" ng-model="user.employeeId" />
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <!-- Here should be backgndImgUri  But its not gonna be here-->
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Mobile App Id: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control" ng-model="user.pnCertName" />
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Maximum Open Conversations:</small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text " class="form-control" ng-model="user.maxAsyncChats" />
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Profile Ids: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="selectedProfile" ng-options="profile as profile.name for profile in profiles" class="form-control">
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <div class="btn btn-sm btn-lp" ng-Click="addProfile(selectedProfile)"><span class="glyphicon glyphicon-plus"></span> add Profile</div>
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Selected Skills
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">ID</th>
+                                        <th class="text-center">Name</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="profile in user.profiles">
+                                        <td class="text-center">{{profile.id}}</td>
+                                        <td class="text-center">{{profile.name}}</td>
+                                        <td class="text-center"><button class="btn btn-lp btn-sm" ng-click="removeProfile(profile)"><span class="glyphicon glyphicon-trash"></span> remove</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>API User: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-model="user.isApiUser" class="form-control">
+                            <option value="true">True</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-primary pull-right">Optional</span>
+                    </div>
+                </div>
+
+                <div class="form-group ">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>User Type: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <select ng-Model="user.userTypeId" class="form-control">
+                            <option value="0">System</option>
+                            <option value="1" selected>Human</option>
+                            <option value="2">Bot</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required</span>
+                    </div>
+                </div>
+
+                <div class="form-group " ng-if="selectedOption==3">
+                    <label class="col-md-3 col-lg-3 col-sm-4"><small>Api User's Application Keys: </small></label>
+                    <div class="col-md-5 col-lg-5 col-sm-7">
+                        <input type="text" class="form-control" ng-model="user.allowedAppKeys" />
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-5">
+                        <span class="label label-danger pull-right">Required for API User</span>
+                    </div>
+                </div>
+
+                <!-- CONTINUE WITH PERMISSION GROUPS -->
+
+                <a ng-if="selectedOption==2" type="submit " class="btn btn-lp btn-sm pull-right" ng-click="createUser(user) ">Create</a>
+                <a ng-if="selectedOption==3" type="submit " class="btn btn-lp btn-sm pull-right" ng-click="updateUser(user) ">Update</a>
+            </form>
+        </div>
+        <div class="col-md-4 col-lg-4 col-sm-6" ng-if="selectedOption==3">
+            <div class="page-header ">
+                <h3>User List</h3>
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>loginName</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="usr in users">
+                            <td>{{usr.loginName}}</td>
+                            <td><button class="btn btn-lp btn-sm" ng-click="getUserById(usr.id)"><span class="glyphicon glyphicon-pencil"></span> edit</button></td>
+                            <td><button class="btn btn-danger btn-sm" ng-click="deleteUser(usr.id)"><span class="glyphicon glyphicon-trash"></span> delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- PICTURE ID, PICTURE URL, memberOf , managerOf WERE SKIPPED -->
